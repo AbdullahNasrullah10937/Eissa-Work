@@ -1,0 +1,159 @@
+beeline -u jdbc:hive2://localhost:10000 -n hive
+Connecting to jdbc:hive2://localhost:10000
+Connected to: Apache Hive (version 4.0.0)
+Driver: Hive JDBC (version 4.0.0)
+Transaction isolation: TRANSACTION_REPEATABLE_READ
+
+0: jdbc:hive2://localhost:10000> -- Clean up old tables
+0: jdbc:hive2://localhost:10000> DROP TABLE IF EXISTS fact_medical_procedure;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> DROP TABLE IF EXISTS dim_patient;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> DROP TABLE IF EXISTS dim_doctor;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> DROP TABLE IF EXISTS dim_operation_theater;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> DROP TABLE IF EXISTS dim_time;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> -- 1. Dimension Tables (Internal Tables)
+0: jdbc:hive2://localhost:10000> CREATE TABLE dim_patient (
+. . . . . . . . . . . . . . . .>     patient_key INT,
+. . . . . . . . . . . . . . . .>     insurance_number STRING,
+. . . . . . . . . . . . . . . .>     first_name STRING,
+. . . . . . . . . . . . . . . .>     last_name STRING,
+. . . . . . . . . . . . . . . .>     date_of_birth STRING,
+. . . . . . . . . . . . . . . .>     weight DOUBLE,
+. . . . . . . . . . . . . . . .>     height DOUBLE
+. . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . .> STORED AS TEXTFILE;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> CREATE TABLE dim_doctor (
+. . . . . . . . . . . . . . . .>     doctor_key INT,
+. . . . . . . . . . . . . . . .>     employee_number STRING,
+. . . . . . . . . . . . . . . .>     first_name STRING,
+. . . . . . . . . . . . . . . .>     last_name STRING,
+. . . . . . . . . . . . . . . .>     specialization STRING
+. . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . .> STORED AS TEXTFILE;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> CREATE TABLE dim_operation_theater (
+. . . . . . . . . . . . . . . .>     theater_key INT,
+. . . . . . . . . . . . . . . .>     room_number STRING,
+. . . . . . . . . . . . . . . .>     building_number STRING,
+. . . . . . . . . . . . . . . .>     building_level STRING,
+. . . . . . . . . . . . . . . .>     type STRING
+. . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . .> STORED AS TEXTFILE;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> CREATE TABLE dim_time (
+. . . . . . . . . . . . . . . .>     time_key INT,
+. . . . . . . . . . . . . . . .>     day_number INT,
+. . . . . . . . . . . . . . . .>     month_name STRING,
+. . . . . . . . . . . . . . . .>     year_number INT
+. . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . .> STORED AS TEXTFILE;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> -- 2. Central Fact Table (Internal Table)
+0: jdbc:hive2://localhost:10000> CREATE TABLE fact_medical_procedure (
+. . . . . . . . . . . . . . . .>     procedure_key INT,
+. . . . . . . . . . . . . . . .>     patient_key INT,
+. . . . . . . . . . . . . . . .>     doctor_key INT,
+. . . . . . . . . . . . . . . .>     theater_key INT,
+. . . . . . . . . . . . . . . .>     start_time_key INT,
+. . . . . . . . . . . . . . . .>     end_time_key INT,
+. . . . . . . . . . . . . . . .>     blood_pressure STRING,
+. . . . . . . . . . . . . . . .>     temperature DOUBLE
+. . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . .> STORED AS TEXTFILE;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> -- 3. Load Sample Data from Local Files
+0: jdbc:hive2://localhost:10000> LOAD DATA LOCAL INPATH '/tmp/task3_data/dim_patient.csv' OVERWRITE INTO TABLE dim_patient;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> LOAD DATA LOCAL INPATH '/tmp/task3_data/dim_doctor.csv' OVERWRITE INTO TABLE dim_doctor;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> LOAD DATA LOCAL INPATH '/tmp/task3_data/dim_operation_theater.csv' OVERWRITE INTO TABLE dim_operation_theater;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> LOAD DATA LOCAL INPATH '/tmp/task3_data/dim_time.csv' OVERWRITE INTO TABLE dim_time;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> LOAD DATA LOCAL INPATH '/tmp/task3_data/fact_medical_procedure.csv' OVERWRITE INTO TABLE fact_medical_procedure;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> -- 4. List Contents of All Tables
+0: jdbc:hive2://localhost:10000> SELECT * FROM dim_patient;
++--------------------------+-------------------------------+-------------------------+------------------------+----------------------------+---------------------+---------------------+
+| dim_patient.patient_key  | dim_patient.insurance_number  | dim_patient.first_name  | dim_patient.last_name  | dim_patient.date_of_birth  | dim_patient.weight  | dim_patient.height  |
++--------------------------+-------------------------------+-------------------------+------------------------+----------------------------+---------------------+---------------------+
+| 1                        | INS-1001                      | John                    | Smith                  | 1980-05-12                 | 78.5                | 178.0               |
+| 2                        | INS-1002                      | Alice                   | Brown                  | 1992-11-23                 | 62.0                | 165.5               |
+| 3                        | INS-1003                      | David                   | Wilson                 | 1975-02-18                 | 85.2                | 182.0               |
+| 4                        | INS-1004                      | Emma                    | Davis                  | 2001-08-30                 | 55.0                | 160.0               |
++--------------------------+-------------------------------+-------------------------+------------------------+----------------------------+---------------------+---------------------+
+4 rows selected
+
+0: jdbc:hive2://localhost:10000> SELECT * FROM dim_doctor;
++------------------------+-----------------------------+------------------------+-----------------------+----------------------------+
+| dim_doctor.doctor_key  | dim_doctor.employee_number  | dim_doctor.first_name  | dim_doctor.last_name  | dim_doctor.specialization  |
++------------------------+-----------------------------+------------------------+-----------------------+----------------------------+
+| 1                      | DOC-501                     | Gregory                | House                 | Diagnostics                |
+| 2                      | DOC-502                     | Stephen                | Strange               | Neuro-Surgery              |
+| 3                      | DOC-503                     | Meredith               | Grey                  | General-Surgery            |
+| 4                      | DOC-504                     | Leonard                | McCoy                 | Cardiology                 |
++------------------------+-----------------------------+------------------------+-----------------------+----------------------------+
+4 rows selected
+
+0: jdbc:hive2://localhost:10000> SELECT * FROM dim_operation_theater;
++------------------------------------+------------------------------------+----------------------------------------+---------------------------------------+-----------------------------+
+| dim_operation_theater.theater_key  | dim_operation_theater.room_number  | dim_operation_theater.building_number  | dim_operation_theater.building_level  | dim_operation_theater.type  |
++------------------------------------+------------------------------------+----------------------------------------+---------------------------------------+-----------------------------+
+| 1                                  | 101                                | B-1                                    | Level-1                               | General                     |
+| 2                                  | 202                                | B-1                                    | Level-2                               | Cardiovascular              |
+| 3                                  | 301                                | B-2                                    | Level-3                               | Neurosurgery                |
+| 4                                  | 401                                | B-2                                    | Level-4                               | Orthopedic                  |
++------------------------------------+------------------------------------+----------------------------------------+---------------------------------------+-----------------------------+
+4 rows selected
+
+0: jdbc:hive2://localhost:10000> SELECT * FROM dim_time;
++--------------------+----------------------+----------------------+-----------------------+
+| dim_time.time_key  | dim_time.day_number  | dim_time.month_name  | dim_time.year_number  |
++--------------------+----------------------+----------------------+-----------------------+
+| 1                  | 10                   | September            | 2026                  |
+| 2                  | 15                   | September            | 2026                  |
+| 3                  | 20                   | September            | 2026                  |
+| 4                  | 25                   | September            | 2026                  |
++--------------------+----------------------+----------------------+-----------------------+
+4 rows selected
+
+0: jdbc:hive2://localhost:10000> SELECT * FROM fact_medical_procedure;
++---------------------------------------+-------------------------------------+------------------------------------+-------------------------------------+----------------------------------------+--------------------------------------+----------------------------------------+-------------------------------------+
+| fact_medical_procedure.procedure_key  | fact_medical_procedure.patient_key  | fact_medical_procedure.doctor_key  | fact_medical_procedure.theater_key  | fact_medical_procedure.start_time_key  | fact_medical_procedure.end_time_key  | fact_medical_procedure.blood_pressure  | fact_medical_procedure.temperature  |
++---------------------------------------+-------------------------------------+------------------------------------+-------------------------------------+----------------------------------------+--------------------------------------+----------------------------------------+-------------------------------------+
+| 1                                     | 1                                   | 1                                  | 1                                   | 1                                      | 2                                    | 120/80                                 | 36.6                                |
+| 2                                     | 2                                   | 2                                  | 2                                   | 2                                      | 3                                    | 135/85                                 | 37.2                                |
+| 3                                     | 3                                   | 3                                  | 3                                   | 3                                      | 4                                    | 118/75                                 | 36.8                                |
+| 4                                     | 4                                   | 4                                  | 4                                   | 4                                      | 4                                    | 140/90                                 | 38.1                                |
++---------------------------------------+-------------------------------------+------------------------------------+-------------------------------------+----------------------------------------+--------------------------------------+----------------------------------------+-------------------------------------+
+4 rows selected
