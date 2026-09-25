@@ -1,0 +1,73 @@
+0: jdbc:hive2://localhost:10000> DROP TABLE IF EXISTS driver_0nf;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> CREATE TABLE driver_0nf (
+. . . . . . . . . . . . . . . .>     first_name STRING,
+. . . . . . . . . . . . . . . .>     last_name STRING,
+. . . . . . . . . . . . . . . .>     licence INT,
+. . . . . . . . . . . . . . . .>     address STRUCT<
+. . . . . . . . . . . . . . . .>         street: STRING,
+. . . . . . . . . . . . . . . .>         bldg: INT,
+. . . . . . . . . . . . . . . .>         city: STRING,
+. . . . . . . . . . . . . . . .>         country: STRING
+. . . . . . . . . . . . . . . .>     >,
+. . . . . . . . . . . . . . . .>     trips ARRAY<
+. . . . . . . . . . . . . . . .>         STRUCT<
+. . . . . . . . . . . . . . . .>             trip_number: INT,
+. . . . . . . . . . . . . . . .>             destination: STRING
+. . . . . . . . . . . . . . . .>         >
+. . . . . . . . . . . . . . . .>     >,
+. . . . . . . . . . . . . . . .>     cities_visited ARRAY<STRING>,
+. . . . . . . . . . . . . . . .>     co_drivers ARRAY<STRING>
+. . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . .> STORED AS TEXTFILE;
+No rows affected
+
+0: jdbc:hive2://localhost:10000> INSERT INTO TABLE driver_0nf VALUES 
+. . . . . . . . . . . . . . . .> (
+. . . . . . . . . . . . . . . .>     'James',
+. . . . . . . . . . . . . . . .>     'Bond',
+. . . . . . . . . . . . . . . .>     7,
+. . . . . . . . . . . . . . . .>     named_struct('street', 'Northfields Ave', 'bldg', 3, 'city', 'Wollongong', 'country', 'Australia'),
+. . . . . . . . . . . . . . . .>     array(
+. . . . . . . . . . . . . . . .>         named_struct('trip_number', 5, 'destination', 'Melbourne'),
+. . . . . . . . . . . . . . . .>         named_struct('trip_number', 2, 'destination', 'Sydney')
+. . . . . . . . . . . . . . . .>     ),
+. . . . . . . . . . . . . . . .>     array('Canberra', 'Wagga Wagga', 'Mildura'),
+. . . . . . . . . . . . . . . .>     array('Robin Hood', 'Harry Potter')
+. . . . . . . . . . . . . . . .> ),
+. . . . . . . . . . . . . . . .> (
+. . . . . . . . . . . . . . . .>     'Sarah',
+. . . . . . . . . . . . . . . .>     'Connor',
+. . . . . . . . . . . . . . . .>     101,
+. . . . . . . . . . . . . . . .>     named_struct('street', 'Bourke St', 'bldg', 42, 'city', 'Melbourne', 'country', 'Australia'),
+. . . . . . . . . . . . . . . .>     array(
+. . . . . . . . . . . . . . . .>         named_struct('trip_number', 1, 'destination', 'Geelong'),
+. . . . . . . . . . . . . . . .>         named_struct('trip_number', 3, 'destination', 'Ballarat')
+. . . . . . . . . . . . . . . .>     ),
+. . . . . . . . . . . . . . . .>     array('Adelaide', 'Perth'),
+. . . . . . . . . . . . . . . .>     array('John Connor', 'Kyle Reese')
+. . . . . . . . . . . . . . . .> ),
+. . . . . . . . . . . . . . . .> (
+. . . . . . . . . . . . . . . .>     'Bruce',
+. . . . . . . . . . . . . . . .>     'Wayne',
+. . . . . . . . . . . . . . . .>     999,
+. . . . . . . . . . . . . . . .>     named_struct('street', 'George St', 'bldg', 10, 'city', 'Sydney', 'country', 'Australia'),
+. . . . . . . . . . . . . . . .>     array(
+. . . . . . . . . . . . . . . .>         named_struct('trip_number', 8, 'destination', 'Brisbane'),
+. . . . . . . . . . . . . . . .>         named_struct('trip_number', 4, 'destination', 'Newcastle')
+. . . . . . . . . . . . . . . .>     ),
+. . . . . . . . . . . . . . . .>     array('Cairns', 'Darwin', 'Hobart'),
+. . . . . . . . . . . . . . . .>     array('Dick Grayson', 'Alfred Pennyworth')
+. . . . . . . . . . . . . . . .> );
+3 rows affected
+
+0: jdbc:hive2://localhost:10000> SELECT * FROM driver_0nf;
++------------------------+-----------------------+---------------------+----------------------------------------------------+----------------------------------------------------+---------------------------------------+---------------------------------------+
+| driver_0nf.first_name  | driver_0nf.last_name  | driver_0nf.licence  |                 driver_0nf.address                 |                  driver_0nf.trips                  |       driver_0nf.cities_visited       |         driver_0nf.co_drivers         |
++------------------------+-----------------------+---------------------+----------------------------------------------------+----------------------------------------------------+---------------------------------------+---------------------------------------+
+| James                  | Bond                  | 7                   | {"street":"Northfields Ave","bldg":3,"city":"Wollongong","country":"Australia"} | [{"trip_number":5,"destination":"Melbourne"},{"trip_number":2,"destination":"Sydney"}] | ["Canberra","Wagga Wagga","Mildura"]  | ["Robin Hood","Harry Potter"]         |
+| Sarah                  | Connor                | 101                 | {"street":"Bourke St","bldg":42,"city":"Melbourne","country":"Australia"}        | [{"trip_number":1,"destination":"Geelong"},{"trip_number":3,"destination":"Ballarat"}]  | ["Adelaide","Perth"]                  | ["John Connor","Kyle Reese"]          |
+| Bruce                  | Wayne                 | 999                 | {"street":"George St","bldg":10,"city":"Sydney","country":"Australia"}           | [{"trip_number":8,"destination":"Brisbane"},{"trip_number":4,"destination":"Newcastle"}] | ["Cairns","Darwin","Hobart"]          | ["Dick Grayson","Alfred Pennyworth"]  |
++------------------------+-----------------------+---------------------+----------------------------------------------------+----------------------------------------------------+---------------------------------------+---------------------------------------+
+3 rows selected
