@@ -1,3 +1,9 @@
+beeline -u jdbc:hive2://localhost:10000 -n hive
+Connecting to jdbc:hive2://localhost:10000
+Connected to: Apache Hive (version 4.0.0)
+Driver: Hive JDBC (version 4.0.0)
+Transaction isolation: TRANSACTION_REPEATABLE_READ
+
 0: jdbc:hive2://localhost:10000> DROP TABLE IF EXISTS driver_0nf;
 No rows affected
 
@@ -23,8 +29,7 @@ No rows affected
 . . . . . . . . . . . . . . . .> STORED AS TEXTFILE;
 No rows affected
 
-0: jdbc:hive2://localhost:10000> INSERT INTO TABLE driver_0nf VALUES 
-. . . . . . . . . . . . . . . .> (
+0: jdbc:hive2://localhost:10000> INSERT INTO TABLE driver_0nf VALUES (
 . . . . . . . . . . . . . . . .>     'James',
 . . . . . . . . . . . . . . . .>     'Bond',
 . . . . . . . . . . . . . . . .>     7,
@@ -35,8 +40,10 @@ No rows affected
 . . . . . . . . . . . . . . . .>     ),
 . . . . . . . . . . . . . . . .>     array('Canberra', 'Wagga Wagga', 'Mildura'),
 . . . . . . . . . . . . . . . .>     array('Robin Hood', 'Harry Potter')
-. . . . . . . . . . . . . . . .> ),
-. . . . . . . . . . . . . . . .> (
+. . . . . . . . . . . . . . . .> );
+1 row affected
+
+0: jdbc:hive2://localhost:10000> INSERT INTO TABLE driver_0nf VALUES (
 . . . . . . . . . . . . . . . .>     'Sarah',
 . . . . . . . . . . . . . . . .>     'Connor',
 . . . . . . . . . . . . . . . .>     101,
@@ -47,8 +54,10 @@ No rows affected
 . . . . . . . . . . . . . . . .>     ),
 . . . . . . . . . . . . . . . .>     array('Adelaide', 'Perth'),
 . . . . . . . . . . . . . . . .>     array('John Connor', 'Kyle Reese')
-. . . . . . . . . . . . . . . .> ),
-. . . . . . . . . . . . . . . .> (
+. . . . . . . . . . . . . . . .> );
+1 row affected
+
+0: jdbc:hive2://localhost:10000> INSERT INTO TABLE driver_0nf VALUES (
 . . . . . . . . . . . . . . . .>     'Bruce',
 . . . . . . . . . . . . . . . .>     'Wayne',
 . . . . . . . . . . . . . . . .>     999,
@@ -60,14 +69,14 @@ No rows affected
 . . . . . . . . . . . . . . . .>     array('Cairns', 'Darwin', 'Hobart'),
 . . . . . . . . . . . . . . . .>     array('Dick Grayson', 'Alfred Pennyworth')
 . . . . . . . . . . . . . . . .> );
-3 rows affected
+1 row affected
 
 0: jdbc:hive2://localhost:10000> SELECT * FROM driver_0nf;
-+------------------------+-----------------------+---------------------+----------------------------------------------------+----------------------------------------------------+---------------------------------------+---------------------------------------+
-| driver_0nf.first_name  | driver_0nf.last_name  | driver_0nf.licence  |                 driver_0nf.address                 |                  driver_0nf.trips                  |       driver_0nf.cities_visited       |         driver_0nf.co_drivers         |
-+------------------------+-----------------------+---------------------+----------------------------------------------------+----------------------------------------------------+---------------------------------------+---------------------------------------+
-| James                  | Bond                  | 7                   | {"street":"Northfields Ave","bldg":3,"city":"Wollongong","country":"Australia"} | [{"trip_number":5,"destination":"Melbourne"},{"trip_number":2,"destination":"Sydney"}] | ["Canberra","Wagga Wagga","Mildura"]  | ["Robin Hood","Harry Potter"]         |
++------------------------+-----------------------+---------------------+-----------------------------------------------------------------------------------+------------------------------------------------------------------------------------------+---------------------------------------+---------------------------------------+
+| driver_0nf.first_name  | driver_0nf.last_name  | driver_0nf.licence  |                                driver_0nf.address                                 |                                     driver_0nf.trips                                     |       driver_0nf.cities_visited       |         driver_0nf.co_drivers         |
++------------------------+-----------------------+---------------------+-----------------------------------------------------------------------------------+------------------------------------------------------------------------------------------+---------------------------------------+---------------------------------------+
+| James                  | Bond                  | 7                   | {"street":"Northfields Ave","bldg":3,"city":"Wollongong","country":"Australia"}   | [{"trip_number":5,"destination":"Melbourne"},{"trip_number":2,"destination":"Sydney"}] | ["Canberra","Wagga Wagga","Mildura"]  | ["Robin Hood","Harry Potter"]         |
 | Sarah                  | Connor                | 101                 | {"street":"Bourke St","bldg":42,"city":"Melbourne","country":"Australia"}        | [{"trip_number":1,"destination":"Geelong"},{"trip_number":3,"destination":"Ballarat"}]  | ["Adelaide","Perth"]                  | ["John Connor","Kyle Reese"]          |
 | Bruce                  | Wayne                 | 999                 | {"street":"George St","bldg":10,"city":"Sydney","country":"Australia"}           | [{"trip_number":8,"destination":"Brisbane"},{"trip_number":4,"destination":"Newcastle"}] | ["Cairns","Darwin","Hobart"]          | ["Dick Grayson","Alfred Pennyworth"]  |
-+------------------------+-----------------------+---------------------+----------------------------------------------------+----------------------------------------------------+---------------------------------------+---------------------------------------+
++------------------------+-----------------------+---------------------+-----------------------------------------------------------------------------------+------------------------------------------------------------------------------------------+---------------------------------------+---------------------------------------+
 3 rows selected
